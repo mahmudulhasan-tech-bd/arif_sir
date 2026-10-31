@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60 Days Java & Database Master Roadmap</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b132b',
+                        cardDark: '#1c2541',
+                        cardActive: '#0077b6',
+                        accentBlue: '#00b4d8',
+                        neonBlue: '#90e0ef',
+                        completedBg: '#03045e'
+                    },
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b132b;
+            color: #ffffff;
+            font-family: 'Hind Siliguri', 'Inter', sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b132b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1c2541;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0077b6;
+        }
+        .glass-card {
+            background: rgba(28, 37, 65, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .day-card {
+            transition: all 0.25s ease-in-out;
+        }
+        .day-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 180, 216, 0.2);
+        }
+        .day-card.completed {
+            background: linear-gradient(135deg, #0077b6 0%, #03045e 100%);
+            border-color: #00b4d8;
+        }
+        .day-card.in-progress {
+            border: 2px solid #00b4d8;
+            box-shadow: 0 0 12px rgba(0, 180, 216, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-gray-800 bg-[#0b132b]/90 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-graduation-cap text-accentBlue text-2xl"></i>
+                <span class="font-bold text-lg tracking-wide hidden sm:inline" id="navBrand">Student Attendance System Preparation</span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <div class="bg-cardDark p-1 rounded-lg border border-gray-700 flex text-sm">
+                    <button id="btnBn" onclick="setLanguage('bn')" class="px-3 py-1 rounded-md font-medium transition bg-accentBlue text-black">Bangla</button>
+                    <button id="btnEn" onclick="setLanguage('en')" class="px-3 py-1 rounded-md font-medium transition text-gray-300 hover:text-white">English</button>
+                </div>
+                <!-- Reset Progress -->
+                <button onclick="confirmReset()" class="text-gray-400 hover:text-red-400 p-2 rounded-lg transition" title="Reset All Progress">
+                    <i class="fa-solid fa-rotate-right text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+
+        <!-- Title Banner -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2 mb-2">
+                <span>🎯</span> <span id="mainTitle">60 Days Java & Database Master Roadmap</span>
+            </h1>
+            <p id="mainSubtitle" class="text-accentBlue text-sm sm:text-base font-medium">
+                Daily Time: 90–120 Minutes | Foundation → Database → JSP/JDBC → Final Project & Viva
+            </p>
+        </div>
+
+        <!-- Date Picker Card -->
+        <div class="max-w-xl mx-auto glass-card rounded-2xl p-4 sm:p-6 mb-8 text-center border border-gray-800">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <label for="startDate" class="text-gray-300 text-sm font-semibold flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-days text-accentBlue"></i>
+                    <span id="labelStartDate">শুরু করার তারিখ:</span>
+                </label>
+                <input type="date" id="startDate" onchange="updateStartDates()" class="bg-[#1c2541] border border-gray-700 text-white text-sm rounded-lg focus:ring-accentBlue focus:border-accentBlue p-2.5 px-4 outline-none">
+            </div>
+        </div>
+
+        <!-- Overall Progress Section -->
+        <div class="max-w-4xl mx-auto text-center mb-10">
+            <h2 id="progressText" class="text-xl sm:text-2xl font-bold text-accentBlue mb-3">
+                সর্বমোট সম্পন্ন হয়েছে: <span id="completedDaysCount">0</span>/60 দিন
+            </h2>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-[#1c2541] rounded-full h-5 p-1 border border-gray-800 shadow-inner">
+                <div id="progressBar" class="bg-gradient-to-r from-accentBlue to-blue-600 h-3 rounded-full transition-all duration-500 shadow-lg" style="width: 0%"></div>
+            </div>
+            
+            <div class="flex justify-between text-xs text-gray-400 mt-2 px-1">
+                <span>Day 1 (Java Start)</span>
+                <span>Day 25 (SQL & PL/SQL)</span>
+                <span>Day 45 (JDBC/JSP)</span>
+                <span>Day 60 (Project Viva)</span>
+            </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-8" id="categoryFilters">
+            <!-- Dynamic Category Filter Buttons -->
+        </div>
+
+        <!-- Days Grid -->
+        <div id="daysGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <!-- Dynamic 60 Cards generated via JS -->
+        </div>
+
+    </main>
+
+    <!-- Task Drawer / Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#1c2541] border border-gray-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-gray-700 flex items-center justify-between bg-[#0b132b]">
+                <div>
+                    <span id="modalCategoryBadge" class="text-xs px-2.5 py-1 rounded-full bg-accentBlue/20 text-accentBlue border border-accentBlue/30 font-semibold mb-1 inline-block">Category</span>
+                    <h3 id="modalDayTitle" class="text-xl font-bold text-white">Day X: Task Title</h3>
+                    <p id="modalDayDate" class="text-xs text-gray-400 mt-0.5">Date: --/--/----</p>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Tasks List) -->
+            <div class="p-6 overflow-y-auto space-y-4 flex-1" id="modalTaskList">
+                <!-- Dynamic Checkboxes -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-gray-700 bg-[#0b132b] flex items-center justify-between">
+                <span id="modalProgressText" class="text-sm font-medium text-gray-300">0/5 Done</span>
+                <button onclick="closeModal()" class="px-5 py-2 bg-accentBlue text-black font-semibold rounded-lg hover:bg-neonBlue transition">
+                    Done & Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Structure for 60 Days Syllabus Roadmap
+        const roadmapData = [
+            // PART 1: JAVA PROGRAMMING FUNDAMENTALS (Days 1 - 12)
+            { day: 1, category: 'Java Fundamentals', titleBn: 'Java Intro & Setup', titleEn: 'Java Intro & Setup', tasksBn: ['Java Environment & JDK Installation', 'Eclipse / IntelliJ Setup', 'First Java Program (Hello World)', 'Understanding main() method', 'Variables & Data Types practice'], tasksEn: ['Java Environment & JDK Installation', 'Eclipse / IntelliJ Setup', 'First Java Program (Hello World)', 'Understanding main() method', 'Variables & Data Types practice'] },
+            { day: 2, category: 'Java Fundamentals', titleBn: 'Operators & Expressions', titleEn: 'Operators & Expressions', tasksBn: ['Arithmetic & Relational Operators', 'Logical Operators (AND, OR, NOT)', 'Assignment Operators & Shorthands', 'Operator Precedence practice', 'Solve 3 calculation programs'], tasksEn: ['Arithmetic & Relational Operators', 'Logical Operators (AND, OR, NOT)', 'Assignment Operators & Shorthands', 'Operator Precedence practice', 'Solve 3 calculation programs'] },
+            { day: 3, category: 'Java Fundamentals', titleBn: 'Control Flow - Conditions', titleEn: 'Control Flow - Conditions', tasksBn: ['if, else if, else logic', 'Nested if statements', 'Switch Case syntax and break', 'Ternary operator practice', 'Build odd/even & grade calculator'], tasksEn: ['if, else if, else logic', 'Nested if statements', 'Switch Case syntax and break', 'Ternary operator practice', 'Build odd/even & grade calculator'] },
+            { day: 4, category: 'Java Fundamentals', titleBn: 'Loops & Iterations', titleEn: 'Loops & Iterations', tasksBn: ['for loop fundamentals', 'while & do-while loops', 'Break and Continue statements', 'Nested loops for patterns', 'Solve 5 loop programming problems'], tasksEn: ['for loop fundamentals', 'while & do-while loops', 'Break and Continue statements', 'Nested loops for patterns', 'Solve 5 loop programming problems'] },
+            { day: 5, category: 'Java Fundamentals', titleBn: 'Arrays in Java', titleEn: 'Arrays in Java', tasksBn: ['1D Array declaration & initialization', 'Array iteration using loops', 'Multidimensional Arrays (2D)', 'Array element insertion & traversal', 'Find Max/Min in an Array'], tasksEn: ['1D Array declaration & initialization', 'Array iteration using loops', 'Multidimensional Arrays (2D)', 'Array element insertion & traversal', 'Find Max/Min in an Array'] },
+            { day: 6, category: 'Java Fundamentals', titleBn: 'String Handling', titleEn: 'String Handling', tasksBn: ['String class & Immutability', 'Important String methods (length, charAt, substring)', 'String comparison (equals vs ==)', 'StringBuilder & StringBuffer', 'String manipulation programs'], tasksEn: ['String class & Immutability', 'Important String methods (length, charAt, substring)', 'String comparison (equals vs ==)', 'StringBuilder & StringBuffer', 'String manipulation programs'] },
+            { day: 7, category: 'Java Fundamentals', titleBn: 'Methods & Functions', titleEn: 'Methods & Functions', tasksBn: ['Defining & calling methods', 'Parameters and Return types', 'Method overloading concept', 'Pass by value concept', 'Build static helper methods'], tasksEn: ['Defining & calling methods', 'Parameters and Return types', 'Method overloading concept', 'Pass by value concept', 'Build static helper methods'] },
+            { day: 8, category: 'Java Fundamentals', titleBn: 'OOP Basics - Class & Object', titleEn: 'OOP Basics - Class & Object', tasksBn: ['Classes and Objects concept', 'Constructors (Default vs Parameterized)', 'this keyword usage', 'Object instantiation and memory', 'Create Student class blueprint'], tasksEn: ['Classes and Objects concept', 'Constructors (Default vs Parameterized)', 'this keyword usage', 'Object instantiation and memory', 'Create Student class blueprint'] },
+            { day: 9, category: 'Java Fundamentals', titleBn: 'OOP Pillars - Encapsulation & Inheritance', titleEn: 'OOP Pillars - Encapsulation & Inheritance', tasksBn: ['Encapsulation & Private attributes', 'Getters and Setters generation', 'Inheritance (extends keyword)', 'super keyword & Constructor chaining', 'Build User -> Teacher hierarchy'], tasksEn: ['Encapsulation & Private attributes', 'Getters and Setters generation', 'Inheritance (extends keyword)', 'super keyword & Constructor chaining', 'Build User -> Teacher hierarchy'] },
+            { day: 10, category: 'Java Fundamentals', titleBn: 'OOP Pillars - Polymorphism & Abstraction', titleEn: 'OOP Pillars - Polymorphism & Abstraction', tasksBn: ['Method Overriding (@Override)', 'Dynamic method dispatch', 'Abstract Classes and Methods', 'Interfaces and Multiple Inheritance', 'Polymorphism real-world exercise'], tasksEn: ['Method Overriding (@Override)', 'Dynamic method dispatch', 'Abstract Classes and Methods', 'Interfaces and Multiple Inheritance', 'Polymorphism real-world exercise'] },
+            { day: 11, category: 'Java Fundamentals', titleBn: 'Exception Handling', titleEn: 'Exception Handling', tasksBn: ['Checked vs Unchecked Exceptions', 'try-catch-finally block', 'throw and throws keywords', 'Custom Exception creation', 'Handle invalid input exceptions'], tasksEn: ['Checked vs Unchecked Exceptions', 'try-catch-finally block', 'throw and throws keywords', 'Custom Exception creation', 'Handle invalid input exceptions'] },
+            { day: 12, category: 'Java Fundamentals', titleBn: 'Java Collections Framework', titleEn: 'Java Collections Framework', tasksBn: ['ArrayList for dynamic list management', 'HashMap for key-value pair storing', 'List & Map iteration using Foreach', 'Generics syntax basic', 'Console Student List project'], tasksEn: ['ArrayList for dynamic list management', 'HashMap for key-value pair storing', 'List & Map iteration using Foreach', 'Generics syntax basic', 'Console Student List project'] },
+
+            // PART 2: WEB DEVELOPMENT FUNDAMENTALS (Days 13 - 18)
+            { day: 13, category: 'Web Fundamentals', titleBn: 'HTML5 Essentials', titleEn: 'HTML5 Essentials', tasksBn: ['HTML Document Structure', 'Headings, Paragraphs, Lists', 'HTML Tables for data display', 'Links & Image tags', 'Build basic HTML outline'], tasksEn: ['HTML Document Structure', 'Headings, Paragraphs, Lists', 'HTML Tables for data display', 'Links & Image tags', 'Build basic HTML outline'] },
+            { day: 14, category: 'Web Fundamentals', titleBn: 'HTML Forms & Inputs', titleEn: 'HTML Forms & Inputs', tasksBn: ['form tag, action & method attributes', 'Input types (text, password, date, radio)', 'Select dropdown & Checkboxes', 'Buttons & Submit actions', 'Design Login & Add Student Forms'], tasksEn: ['form tag, action & method attributes', 'Input types (text, password, date, radio)', 'Select dropdown & Checkboxes', 'Buttons & Submit actions', 'Design Login & Add Student Forms'] },
+            { day: 15, category: 'Web Fundamentals', titleBn: 'CSS Setup & Box Model', titleEn: 'CSS Setup & Box Model', tasksBn: ['Inline, Internal, External CSS', 'Selectors, Colors, Typography', 'Margin, Padding & Border', 'CSS Box Model concept', 'Style tables and buttons'], tasksEn: ['Inline, Internal, External CSS', 'Selectors, Colors, Typography', 'Margin, Padding & Border', 'CSS Box Model concept', 'Style tables and buttons'] },
+            { day: 16, category: 'Web Fundamentals', titleBn: 'Flexbox & Responsive Layout', titleEn: 'Flexbox & Responsive Layout', tasksBn: ['Flexbox container & item properties', 'Alignments (justify-content, align-items)', 'Responsive design with Media Queries', 'CSS Grid basic layout', 'Design Login UI & Dashboard layout'], tasksEn: ['Flexbox container & item properties', 'Alignments (justify-content, align-items)', 'Responsive design with Media Queries', 'CSS Grid basic layout', 'Design Login UI & Dashboard layout'] },
+            { day: 17, category: 'Web Fundamentals', titleBn: 'HTTP Protocol & Web Architecture', titleEn: 'HTTP Protocol & Web Architecture', tasksBn: ['Client-Server Architecture', 'HTTP Request & Response structure', 'GET vs POST methods difference', 'URL parameters & Query Strings', 'Cookies & Sessions concept'], tasksEn: ['Client-Server Architecture', 'HTTP Request & Response structure', 'GET vs POST methods difference', 'URL parameters & Query Strings', 'Cookies & Sessions concept'] },
+            { day: 18, category: 'Web Fundamentals', titleBn: 'Attendance UI Wireframing', titleEn: 'Attendance UI Wireframing', tasksBn: ['Design Login Page UI', 'Design Admin Dashboard layout', 'Design Student List Page', 'Design Attendance Marking Page', 'Design Attendance Summary Report UI'], tasksEn: ['Design Login Page UI', 'Design Admin Dashboard layout', 'Design Student List Page', 'Design Attendance Marking Page', 'Design Attendance Summary Report UI'] },
+
+            // PART 3: SYSTEM ANALYSIS & DESIGN (Days 19 - 24)
+            { day: 19, category: 'System Analysis', titleBn: 'SDLC & Feasibility Study', titleEn: 'SDLC & Feasibility Study', tasksBn: ['System & SAD definition', 'SDLC Phases (Planning to Maintenance)', 'SDLC Models (Waterfall vs Agile)', 'Technical & Economic Feasibility', 'Write System Scope & Problem Statement'], tasksEn: ['System & SAD definition', 'SDLC Phases (Planning to Maintenance)', 'SDLC Models (Waterfall vs Agile)', 'Technical & Economic Feasibility', 'Write System Scope & Problem Statement'] },
+            { day: 20, category: 'System Analysis', titleBn: 'Requirements Engineering', titleEn: 'Requirements Engineering', tasksBn: ['Functional Requirements list', 'Non-Functional Requirements (Security, Speed)', 'Stakeholder identification (Admin, Teacher)', 'Business Rules definition', 'Prepare SRS Outline for Attendance System'], tasksEn: ['Functional Requirements list', 'Non-Functional Requirements (Security, Speed)', 'Stakeholder identification (Admin, Teacher)', 'Business Rules definition', 'Prepare SRS Outline for Attendance System'] },
+            { day: 21, category: 'System Analysis', titleBn: 'UML - Use Case Diagram', titleEn: 'UML - Use Case Diagram', tasksBn: ['Use Case Actors & Relationships', 'Include & Extend relationships', 'Draw Attendance Use Case Diagram', 'Use Case Specification table', 'Review Draw.io / Lucidchart diagrams'], tasksEn: ['Use Case Actors & Relationships', 'Include & Extend relationships', 'Draw Attendance Use Case Diagram', 'Use Case Specification table', 'Review Draw.io / Lucidchart diagrams'] },
+            { day: 22, category: 'System Analysis', titleBn: 'UML - Activity & Sequence Diagrams', titleEn: 'UML - Activity & Sequence Diagrams', tasksBn: ['Activity Diagram workflows', 'Decision nodes and parallel activities', 'Sequence Diagram object interactions', 'Lifelines and Message passing', 'Draw Attendance Marking Sequence Diagram'], tasksEn: ['Activity Diagram workflows', 'Decision nodes and parallel activities', 'Sequence Diagram object interactions', 'Lifelines and Message passing', 'Draw Attendance Marking Sequence Diagram'] },
+            { day: 23, category: 'System Analysis', titleBn: 'UML - Class & ER Diagram', titleEn: 'UML - Class & ER Diagram', tasksBn: ['Class Diagram attributes & methods', 'Multiplicity & Associations', 'ER Diagram Entities, Attributes, Relationships', 'Map ERD to Relational Schema', 'Draw Attendance System ER Diagram'], tasksEn: ['Class Diagram attributes & methods', 'Multiplicity & Associations', 'ER Diagram Entities, Attributes, Relationships', 'Map ERD to Relational Schema', 'Draw Attendance System ER Diagram'] },
+            { day: 24, category: 'System Analysis', titleBn: 'SRS Documentation', titleEn: 'SRS Documentation', tasksBn: ['Assemble System Architecture diagram', 'Finalize System Objectives section', 'Document Data Flow & Logic', 'Review SAD viva questions', 'Complete SRS draft for final submission'], tasksEn: ['Assemble System Architecture diagram', 'Finalize System Objectives section', 'Document Data Flow & Logic', 'Review SAD viva questions', 'Complete SRS draft for final submission'] },
+
+            // PART 4 & 5: DBMS & ORACLE SQL (Days 25 - 34)
+            { day: 25, category: 'Database & SQL', titleBn: 'DBMS Basics & Relational Keys', titleEn: 'DBMS Basics & Relational Keys', tasksBn: ['DBMS vs RDBMS concepts', 'Tables, Rows, Columns, Tuples', 'Primary Key & Foreign Key rules', 'Candidate, Super, Composite Keys', 'Define key mappings for 9 project tables'], tasksEn: ['DBMS vs RDBMS concepts', 'Tables, Rows, Columns, Tuples', 'Primary Key & Foreign Key rules', 'Candidate, Super, Composite Keys', 'Define key mappings for 9 project tables'] },
+            { day: 26, category: 'Database & SQL', titleBn: 'Normalization (1NF, 2NF, 3NF)', titleEn: 'Normalization (1NF, 2NF, 3NF)', tasksBn: ['Data Redundancy & Anomalies', 'First Normal Form (1NF) rules', 'Second Normal Form (2NF) & Partial Dependency', 'Third Normal Form (3NF) & Transitive Dependency', 'Normalize Attendance schema to 3NF'], tasksEn: ['Data Redundancy & Anomalies', 'First Normal Form (1NF) rules', 'Second Normal Form (2NF) & Partial Dependency', 'Third Normal Form (3NF) & Transitive Dependency', 'Normalize Attendance schema to 3NF'] },
+            { day: 27, category: 'Database & SQL', titleBn: 'Oracle Setup & DDL Commands', titleEn: 'Oracle Setup & DDL Commands', tasksBn: ['Oracle Database Express Edition setup', 'SQL Developer tool connection', 'CREATE TABLE statements with constraints', 'ALTER, DROP, TRUNCATE syntax', 'Create USERS, STUDENTS, COURSES tables'], tasksEn: ['Oracle Database Express Edition setup', 'SQL Developer tool connection', 'CREATE TABLE statements with constraints', 'ALTER, DROP, TRUNCATE syntax', 'Create USERS, STUDENTS, COURSES tables'] },
+            { day: 28, category: 'Database & SQL', titleBn: 'Project Tables Creation (All 9)', titleEn: 'Project Tables Creation (All 9)', tasksBn: ['Create TEACHERS & SECTIONS tables', 'Create COURSE_OFFERINGS table', 'Create CLASS_SESSIONS table', 'Create ATTENDANCE table with foreign keys', 'Create ATTENDANCE_AUDIT table'], tasksEn: ['Create TEACHERS & SECTIONS tables', 'Create COURSE_OFFERINGS table', 'Create CLASS_SESSIONS table', 'Create ATTENDANCE table with foreign keys', 'Create ATTENDANCE_AUDIT table'] },
+            { day: 29, category: 'Database & SQL', titleBn: 'DML Commands & Constraints', titleEn: 'DML Commands & Constraints', tasksBn: ['INSERT INTO records', 'UPDATE records with WHERE clause', 'DELETE records safely', 'NOT NULL, UNIQUE, CHECK constraints', 'Populate sample data for all 9 tables'], tasksEn: ['INSERT INTO records', 'UPDATE records with WHERE clause', 'DELETE records safely', 'NOT NULL, UNIQUE, CHECK constraints', 'Populate sample data for all 9 tables'] },
+            { day: 30, category: 'Database & SQL', titleBn: 'DQL - Data Querying & Filters', titleEn: 'DQL - Data Querying & Filters', tasksBn: ['SELECT statement & Column Aliases', 'WHERE clause filtering & DISTINCT', 'ORDER BY ascending / descending', 'BETWEEN, IN, LIKE, IS NULL operators', 'Execute 15 basic query exercises'], tasksEn: ['SELECT statement & Column Aliases', 'WHERE clause filtering & DISTINCT', 'ORDER BY ascending / descending', 'BETWEEN, IN, LIKE, IS NULL operators', 'Execute 15 basic query exercises'] },
+            { day: 31, category: 'Database & SQL', titleBn: 'Aggregate Functions & Grouping', titleEn: 'Aggregate Functions & Grouping', tasksBn: ['COUNT(), SUM(), AVG(), MIN(), MAX()', 'GROUP BY clause syntax', 'HAVING clause filtering vs WHERE', 'Calculate total classes per course', 'Calculate attendance count per student'], tasksEn: ['COUNT(), SUM(), AVG(), MIN(), MAX()', 'GROUP BY clause syntax', 'HAVING clause filtering vs WHERE', 'Calculate total classes per course', 'Calculate attendance count per student'] },
+            { day: 32, category: 'Database & SQL', titleBn: 'SQL Joins Masterclass', titleEn: 'SQL Joins Masterclass', tasksBn: ['INNER JOIN multi-table query', 'LEFT OUTER JOIN vs RIGHT OUTER JOIN', 'FULL OUTER JOIN syntax', 'Joining STUDENTS, ATTENDANCE & COURSES', 'Write query for student attendance report'], tasksEn: ['INNER JOIN multi-table query', 'LEFT OUTER JOIN vs RIGHT OUTER JOIN', 'FULL OUTER JOIN syntax', 'Joining STUDENTS, ATTENDANCE & COURSES', 'Write query for student attendance report'] },
+            { day: 33, category: 'Database & SQL', titleBn: 'Subqueries & Views', titleEn: 'Subqueries & Views', tasksBn: ['Single-row subqueries', 'Multi-row subqueries (IN, ANY, ALL)', 'Correlated Subqueries', 'CREATE VIEW for attendance reports', 'Index creation for performance'], tasksEn: ['Single-row subqueries', 'Multi-row subqueries (IN, ANY, ALL)', 'Correlated Subqueries', 'CREATE VIEW for attendance reports', 'Index creation for performance'] },
+            { day: 34, category: 'Database & SQL', titleBn: 'Transactions & TCL', titleEn: 'Transactions & TCL', tasksBn: ['COMMIT and ROLLBACK commands', 'SAVEPOINT execution', 'ACID properties understanding', 'Transaction concurrency basics', 'Practice transaction safety scripts'], tasksEn: ['COMMIT and ROLLBACK commands', 'SAVEPOINT execution', 'ACID properties understanding', 'Transaction concurrency basics', 'Practice transaction safety scripts'] },
+
+            // PART 6: ORACLE PL/SQL (Days 35 - 42)
+            { day: 35, category: 'PL/SQL', titleBn: 'PL/SQL Block & Variables', titleEn: 'PL/SQL Block & Variables', tasksBn: ['PL/SQL Architecture & Anonymous Block', 'DECLARE, BEGIN, END structure', 'Variables, Constants, Data types', 'DBMS_OUTPUT.PUT_LINE output', 'Write first PL/SQL calculation block'], tasksEn: ['PL/SQL Architecture & Anonymous Block', 'DECLARE, BEGIN, END structure', 'Variables, Constants, Data types', 'DBMS_OUTPUT.PUT_LINE output', 'Write first PL/SQL calculation block'] },
+            { day: 36, category: 'PL/SQL', titleBn: 'PL/SQL Control Structure', titleEn: 'PL/SQL Control Structure', tasksBn: ['IF-THEN-ELSIF-ELSE statements', 'CASE statements in PL/SQL', 'Basic LOOP, WHILE LOOP, FOR LOOP', 'Loop exit conditions', 'Evaluate attendance status with logic'], tasksEn: ['IF-THEN-ELSIF-ELSE statements', 'CASE statements in PL/SQL', 'Basic LOOP, WHILE LOOP, FOR LOOP', 'Loop exit conditions', 'Evaluate attendance status with logic'] },
+            { day: 37, category: 'PL/SQL', titleBn: 'Cursors in PL/SQL', titleEn: 'Cursors in PL/SQL', tasksBn: ['Implicit Cursors (%FOUND, %NOTFOUND)', 'Explicit Cursor declaration & OPEN', 'FETCH and CLOSE cursor loops', 'FOR Loop cursors shortcut', 'Fetch student lists using Cursors'], tasksEn: ['Implicit Cursors (%FOUND, %NOTFOUND)', 'Explicit Cursor declaration & OPEN', 'FETCH and CLOSE cursor loops', 'FOR Loop cursors shortcut', 'Fetch student lists using Cursors'] },
+            { day: 38, category: 'PL/SQL', titleBn: 'PL/SQL Exception Handling', titleEn: 'PL/SQL Exception Handling', tasksBn: ['Predefined Exceptions (NO_DATA_FOUND, TOO_MANY_ROWS)', 'User-defined Exceptions', 'RAISE_APPLICATION_ERROR handling', 'EXCEPTION block syntax', 'Handle invalid student ID exception'], tasksEn: ['Predefined Exceptions (NO_DATA_FOUND, TOO_MANY_ROWS)', 'User-defined Exceptions', 'RAISE_APPLICATION_ERROR handling', 'EXCEPTION block syntax', 'Handle invalid student ID exception'] },
+            { day: 39, category: 'PL/SQL', titleBn: 'Stored Procedure: SP_MARK_ATTENDANCE', titleEn: 'Stored Procedure: SP_MARK_ATTENDANCE', tasksBn: ['CREATE OR REPLACE PROCEDURE syntax', 'IN, OUT, IN OUT parameters', 'Write SP_MARK_ATTENDANCE procedure', 'Check duplicate attendance inside SP', 'Test procedure execution in SQL Dev'], tasksEn: ['CREATE OR REPLACE PROCEDURE syntax', 'IN, OUT, IN OUT parameters', 'Write SP_MARK_ATTENDANCE procedure', 'Check duplicate attendance inside SP', 'Test procedure execution in SQL Dev'] },
+            { day: 40, category: 'PL/SQL', titleBn: 'Function: FN_ATTENDANCE_PERCENTAGE', titleEn: 'Function: FN_ATTENDANCE_PERCENTAGE', tasksBn: ['CREATE FUNCTION & RETURN statement', 'Procedure vs Function differences', 'Write FN_ATTENDANCE_PERCENTAGE', 'Calculate (Present/Total)*100 formula', 'Call function inside SELECT query'], tasksEn: ['CREATE FUNCTION & RETURN statement', 'Procedure vs Function differences', 'Write FN_ATTENDANCE_PERCENTAGE', 'Calculate (Present/Total)*100 formula', 'Call function inside SELECT query'] },
+            { day: 41, category: 'PL/SQL', titleBn: 'Database Triggers', titleEn: 'Database Triggers', tasksBn: ['BEFORE / AFTER Triggers concept', 'ROW level vs STATEMENT level triggers', ':NEW and :OLD pseudorecords', 'Create audit log trigger for attendance update', 'Test trigger auto-execution'], tasksEn: ['BEFORE / AFTER Triggers concept', 'ROW level vs STATEMENT level triggers', ':NEW and :OLD pseudorecords', 'Create audit log trigger for attendance update', 'Test trigger auto-execution'] },
+            { day: 42, category: 'PL/SQL', titleBn: 'Packages & Review', titleEn: 'Packages & Review', tasksBn: ['PL/SQL Package Specification & Body', 'Grouping procedures and functions', 'Procedure vs Function vs Trigger viva questions', 'Database script backup', 'PL/SQL section practice exam'], tasksEn: ['PL/SQL Package Specification & Body', 'Grouping procedures and functions', 'Procedure vs Function vs Trigger viva questions', 'Database script backup', 'PL/SQL section practice exam'] },
+
+            // PART 7: JDBC - JAVA DATABASE CONNECTIVITY (Days 43 - 48)
+            { day: 43, category: 'JDBC & Backend', titleBn: 'JDBC Architecture & OJDBC Driver', titleEn: 'JDBC Architecture & OJDBC Driver', tasksBn: ['JDBC Architecture & 4 Driver types', 'Adding ojdbc8.jar / ojdbc10.jar build path', 'Class.forName() driver loading', 'DriverManager.getConnection() syntax', 'Write DBConnection.java helper class'], tasksEn: ['JDBC Architecture & 4 Driver types', 'Adding ojdbc8.jar / ojdbc10.jar build path', 'Class.forName() driver loading', 'DriverManager.getConnection() syntax', 'Write DBConnection.java helper class'] },
+            { day: 44, category: 'JDBC & Backend', titleBn: 'JDBC Statement vs PreparedStatement', titleEn: 'JDBC Statement vs PreparedStatement', tasksBn: ['Statement interface limitations', 'PreparedStatement benefits & SQL Injection', 'Executing executeUpdate() & executeQuery()', 'Parameter mapping with setInt(), setString()', 'Insert Student data from Java'], tasksEn: ['Statement interface limitations', 'PreparedStatement benefits & SQL Injection', 'Executing executeUpdate() & executeQuery()', 'Parameter mapping with setInt(), setString()', 'Insert Student data from Java'] },
+            { day: 45, category: 'JDBC & Backend', titleBn: 'ResultSet & Data Retrieval', titleEn: 'ResultSet & Data Retrieval', tasksBn: ['ResultSet cursor iteration (rs.next())', 'Extracting columns (getString, getInt, getDate)', 'Mapping ResultSet to Java Objects (Student POJO)', 'Closing Connection, Statement, ResultSet', 'Fetch and print all students in console'], tasksEn: ['ResultSet cursor iteration (rs.next())', 'Extracting columns (getString, getInt, getDate)', 'Mapping ResultSet to Java Objects (Student POJO)', 'Closing Connection, Statement, ResultSet', 'Fetch and print all students in console'] },
+            { day: 46, category: 'JDBC & Backend', titleBn: 'JDBC CRUD Operations Complete', titleEn: 'JDBC CRUD Operations Complete', tasksBn: ['Build Student DAO (Data Access Object)', 'Implement addStudent() method', 'Implement updateStudent() method', 'Implement deleteStudent() method', 'Implement getStudentById() search'], tasksEn: ['Build Student DAO (Data Access Object)', 'Implement addStudent() method', 'Implement updateStudent() method', 'Implement deleteStudent() method', 'Implement getStudentById() search'] },
+            { day: 47, category: 'JDBC & Backend', titleBn: 'Calling PL/SQL Stored Procedures', titleEn: 'Calling PL/SQL Stored Procedures', tasksBn: ['CallableStatement interface usage', 'Call SP_MARK_ATTENDANCE from Java', 'Registering OUT parameters if any', 'Handling SQLException properly', 'Test Java-to-Oracle Procedure integration'], tasksEn: ['CallableStatement interface usage', 'Call SP_MARK_ATTENDANCE from Java', 'Registering OUT parameters if any', 'Handling SQLException properly', 'Test Java-to-Oracle Procedure integration'] },
+            { day: 48, category: 'JDBC & Backend', titleBn: 'Apache Tomcat & Servlet Intro', titleEn: 'Apache Tomcat & Servlet Intro', tasksBn: ['Apache Tomcat Server configuration', 'Servlet Lifecycle (init, service, destroy)', 'HttpServletRequest & HttpServletResponse', 'doGet() and doPost() handlers', 'Create LoginServlet routing'], tasksEn: ['Apache Tomcat Server configuration', 'Servlet Lifecycle (init, service, destroy)', 'HttpServletRequest & HttpServletResponse', 'doGet() and doPost() handlers', 'Create LoginServlet routing'] },
+
+            // PART 8: JSP & DYNAMIC WEB APPLICATION (Days 49 - 54)
+            { day: 49, category: 'JSP Development', titleBn: 'JSP Architecture & Directives', titleEn: 'JSP Architecture & Directives', tasksBn: ['JSP Lifecycle & Translation to Servlet', 'JSP Directives (<%@ page %>, include)', 'JSP Scriptlets (<% %>) & Expressions (<%= %>)', 'JSP Declarations (<%! %>)', 'Create index.jsp welcome page'], tasksEn: ['JSP Architecture & Directives', 'JSP Directives (<%@ page %>, include)', 'JSP Scriptlets (<% %>) & Expressions (<%= %>)', 'JSP Declarations (<%! %>)', 'Create index.jsp welcome page'] },
+            { day: 50, category: 'JSP Development', titleBn: 'JSP Implicit Objects & Forms', titleEn: 'JSP Implicit Objects & Forms', tasksBn: ['Implicit objects (request, response, session, out)', 'Form data processing via request.getParameter()', 'Build login.jsp page', 'Authenticate user credentials with JDBC', 'Redirect to dashboard on success'], tasksEn: ['Implicit objects (request, response, session, out)', 'Form data processing via request.getParameter()', 'Build login.jsp page', 'Authenticate user credentials with JDBC', 'Redirect to dashboard on success'] },
+            { day: 51, category: 'JSP Development', titleBn: 'Session Management & Security', titleEn: 'Session Management & Security', tasksBn: ['HttpSession creation & attributes setting', 'Session timeout & invalidation (logout.jsp)', 'Role-based access control (Admin vs Teacher)', 'Prevent unauthorized URL access via Session filter', 'Create dashboard.jsp layout'], tasksEn: ['HttpSession creation & attributes setting', 'Session timeout & invalidation (logout.jsp)', 'Role-based access control (Admin vs Teacher)', 'Prevent unauthorized URL access via Session filter', 'Create dashboard.jsp layout'] },
+            { day: 52, category: 'JSP Development', titleBn: 'Student & Course Management JSP', titleEn: 'Student & Course Management JSP', tasksBn: ['Build students.jsp (Display table)', 'Build student_add.jsp form', 'Build student_edit.jsp form', 'Build courses.jsp & sections.jsp', 'Integrate CRUD actions with Servlets'], tasksEn: ['Build students.jsp (Display table)', 'Build student_add.jsp form', 'Build student_edit.jsp form', 'Build courses.jsp & sections.jsp', 'Integrate CRUD actions with Servlets'] },
+            { day: 53, category: 'JSP Development', titleBn: 'Attendance Marking JSP Page', titleEn: 'Attendance Marking JSP Page', tasksBn: ['Build class_sessions.jsp (Create session)', 'Build take_attendance.jsp page', 'Dynamic student checkbox list generation', 'Submit attendance form data to Servlet', 'Call SP_MARK_ATTENDANCE per student'], tasksEn: ['Build class_sessions.jsp (Create session)', 'Build take_attendance.jsp page', 'Dynamic student checkbox list generation', 'Submit attendance form data to Servlet', 'Call SP_MARK_ATTENDANCE per student'] },
+            { day: 54, category: 'JSP Development', titleBn: 'Attendance Report & Calculation JSP', titleEn: 'Attendance Report & Calculation JSP', tasksBn: ['Build attendance_report.jsp', 'Call FN_ATTENDANCE_PERCENTAGE from JSP/JDBC', 'Display percentage progress bar per student', 'Filter reports by course or section', 'Add Print / Export view styling'], tasksEn: ['Build attendance_report.jsp', 'Call FN_ATTENDANCE_PERCENTAGE from JSP/JDBC', 'Display percentage progress bar per student', 'Filter reports by course or section', 'Add Print / Export view styling'] },
+
+            // PART 9 & 10: TESTING, GIT, PROJECT & VIVA (Days 55 - 60)
+            { day: 55, category: 'Testing & Security', titleBn: 'Software Testing & Test Cases', titleEn: 'Software Testing & Test Cases', tasksBn: ['Verification vs Validation concepts', 'Black-Box & White-Box testing', 'Write 10 Functional Test Cases', 'Test duplicate attendance prevention', 'Test invalid login rejection'], tasksEn: ['Verification vs Validation concepts', 'Black-Box & White-Box testing', 'Write 10 Functional Test Cases', 'Test duplicate attendance prevention', 'Test invalid login rejection'] },
+            { day: 56, category: 'Testing & Security', titleBn: 'Security & Bug Fixing', titleEn: 'Security & Bug Fixing', tasksBn: ['SQL Injection vulnerability prevention', 'Input validation & sanitization', 'Password Hashing (SHA-256 / BCrypt)', 'Fix UI display bugs & null pointer errors', 'Application security audit'], tasksEn: ['SQL Injection vulnerability prevention', 'Input validation & sanitization', 'Password Hashing (SHA-256 / BCrypt)', 'Fix UI display bugs & null pointer errors', 'Application security audit'] },
+            { day: 57, category: 'Git & Professional', titleBn: 'Git & GitHub Setup', titleEn: 'Git & GitHub Setup', tasksBn: ['Git init, status, add, commit workflow', 'Create GitHub Repository: student-attendance-system', 'Push project source code to GitHub', 'Create standard README.md file', 'Document folder structure & setup steps'], tasksEn: ['Git init, status, add, commit workflow', 'Create GitHub Repository: student-attendance-system', 'Push project source code to GitHub', 'Create standard README.md file', 'Document folder structure & setup steps'] },
+            { day: 58, category: 'Final Project', titleBn: 'Full Integration & Deployment', titleEn: 'Full Integration & Deployment', tasksBn: ['End-to-End system testing (Login to Report)', 'Export Oracle DB schema script (.sql)', 'Deploy project WAR file on Tomcat', 'Prepare sample demo data', 'Refactor clean code & comments'], tasksEn: ['End-to-End system testing (Login to Report)', 'Export Oracle DB schema script (.sql)', 'Deploy project WAR file on Tomcat', 'Prepare sample demo data', 'Refactor clean code & comments'] },
+            { day: 59, category: 'Final Project', titleBn: 'Project Documentation & Slides', titleEn: 'Project Documentation & Slides', tasksBn: ['Finalize SRS & System Design Document', 'Create PowerPoint presentation slides', 'Include Use Case, ERD & Architecture diagrams', 'Write User Manual / Setup Guide', 'Practice 15-minute project presentation'], tasksEn: ['Finalize SRS & System Design Document', 'Create PowerPoint presentation slides', 'Include Use Case, ERD & Architecture diagrams', 'Write User Manual / Setup Guide', 'Practice 15-minute project presentation'] },
+            { day: 60, category: 'Final Project', titleBn: 'Viva & Code Defense Prep', titleEn: 'Viva & Code Defense Prep', tasksBn: ['Prepare top 20 Viva questions & answers', 'Practice explaining PL/SQL Stored Procedures aloud', 'Practice explaining JDBC PreparedStatement & Connection', 'Practice explaining SDLC & Database Normalization', 'Final Code Demonstration Mock Viva'], tasksEn: ['Prepare top 20 Viva questions & answers', 'Practice explaining PL/SQL Stored Procedures aloud', 'Practice explaining JDBC PreparedStatement & Connection', 'Practice explaining SDLC & Database Normalization', 'Final Code Demonstration Mock Viva'] }
+        ];
+
+        // Global State Management
+        let currentLang = 'bn'; // 'bn' or 'en'
+        let selectedCategory = 'All';
+        let userProgress = JSON.parse(localStorage.getItem('attendance_roadmap_progress')) || {};
+        let startDateVal = localStorage.getItem('attendance_roadmap_startdate') || getTodayDateString();
+        let activeDayNumber = null;
+
+        // Categories List
+        const categories = ['All', 'Java Fundamentals', 'Web Fundamentals', 'System Analysis', 'Database & SQL', 'PL/SQL', 'JDBC & Backend', 'JSP Development', 'Testing & Security', 'Git & Professional', 'Final Project'];
+
+        // Translations Object
+        const translations = {
+            bn: {
+                navBrand: "Student Attendance System Preparation",
+                mainTitle: "60 Days Java & Database Master Roadmap",
+                mainSubtitle: "Daily Time: 90–120 Minutes | Java → Database → Web → Final Project",
+                labelStartDate: "শুরু করার তারিখ:",
+                progressText: "সর্বমোট সম্পন্ন হয়েছে:",
+                doneSuffix: "সম্পন্ন",
+                dayPrefix: "Day ",
+                allCategory: "সব ক্যাটাগরি",
+                done: "Done",
+                confirmReset: "আপনি কি নিশ্চিত যে আপনার সমস্ত প্রগ্রেস রিসেট করতে চান?"
+            },
+            en: {
+                navBrand: "Student Attendance System Preparation",
+                mainTitle: "60 Days Java & Database Master Roadmap",
+                mainSubtitle: "Daily Time: 90–120 Minutes | Java → Database → Web → Final Project",
+                labelStartDate: "Start Date:",
+                progressText: "Total Completed:",
+                doneSuffix: "Completed",
+                dayPrefix: "Day ",
+                allCategory: "All Categories",
+                done: "Done",
+                confirmReset: "Are you sure you want to reset all your learning progress?"
+            }
+        };
+
+        // Initialize Application
+        window.onload = function() {
+            document.getElementById('startDate').value = startDateVal;
+            renderCategoryFilters();
+            renderGrid();
+            updateOverallProgress();
+            applyLanguage();
+        };
+
+        function getTodayDateString() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('btnBn').className = lang === 'bn' ? 'px-3 py-1 rounded-md font-medium transition bg-accentBlue text-black' : 'px-3 py-1 rounded-md font-medium transition text-gray-300 hover:text-white';
+            document.getElementById('btnEn').className = lang === 'en' ? 'px-3 py-1 rounded-md font-medium transition bg-accentBlue text-black' : 'px-3 py-1 rounded-md font-medium transition text-gray-300 hover:text-white';
+            
+            applyLanguage();
+            renderGrid();
+            if (activeDayNumber !== null) {
+                openModal(activeDayNumber);
+            }
+        }
+
+        function applyLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('navBrand').innerText = t.navBrand;
+            document.getElementById('mainTitle').innerText = t.mainTitle;
+            document.getElementById('mainSubtitle').innerText = t.mainSubtitle;
+            document.getElementById('labelStartDate').innerText = t.labelStartDate;
+            updateOverallProgress();
+        }
+
+        function updateStartDates() {
+            startDateVal = document.getElementById('startDate').value;
+            localStorage.setItem('attendance_roadmap_startdate', startDateVal);
+            renderGrid();
+        }
+
+        function calculateDateForDay(dayNumber) {
+            if (!startDateVal) return '--/--/----';
+            const date = new Date(startDateVal);
+            date.setDate(date.getDate() + (dayNumber - 1));
+            
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = '';
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1.5 rounded-full text-xs font-semibold border transition ${selectedCategory === cat ? 'bg-accentBlue text-black border-accentBlue' : 'bg-cardDark text-gray-300 border-gray-700 hover:border-gray-500'}`;
+                btn.innerText = cat === 'All' ? (currentLang === 'bn' ? 'সব ক্যাটাগরি' : 'All Categories') : cat;
+                btn.onclick = () => {
+                    selectedCategory = cat;
+                    renderCategoryFilters();
+                    renderGrid();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            const filteredData = selectedCategory === 'All' 
+                ? roadmapData 
+                : roadmapData.filter(d => d.category === selectedCategory);
+
+            filteredData.forEach(item => {
+                const dayKey = `day_${item.day}`;
+                const completedTasks = userProgress[dayKey] || [];
+                const totalTasks = item.tasksBn.length;
+                const isFullyDone = completedTasks.length === totalTasks && totalTasks > 0;
+                const dateStr = calculateDateForDay(item.day);
+                const title = currentLang === 'bn' ? item.titleBn : item.titleEn;
+
+                let cardStatusClass = '';
+                if (isFullyDone) {
+                    cardStatusClass = 'completed';
+                } else if (completedTasks.length > 0) {
+                    cardStatusClass = 'in-progress';
+                } else {
+                    cardStatusClass = 'bg-[#1c2541] border-gray-800';
+                }
+
+                const card = document.createElement('div');
+                card.className = `day-card ${cardStatusClass} glass-card rounded-xl p-4 cursor-pointer relative flex flex-col justify-between border`;
+                card.onclick = () => openModal(item.day);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-accentBlue bg-black/40 px-2 py-0.5 rounded border border-accentBlue/20">Day ${item.day}</span>
+                            <span class="text-[11px] text-gray-300 flex items-center gap-1">
+                                <i class="fa-regular fa-calendar text-[10px]"></i> ${dateStr}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-sm text-white line-clamp-2 mb-2">${title}</h4>
+                    </div>
+                    <div class="pt-3 border-t border-gray-700/50 flex items-center justify-between text-xs">
+                        <span class="text-gray-400 font-medium">${completedTasks.length}/${totalTasks} Done</span>
+                        ${isFullyDone 
+                            ? `<span class="text-emerald-400 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${currentLang === 'bn' ? 'সম্পন্ন' : 'Done'}</span>` 
+                            : `<span class="text-accentBlue hover:underline">${currentLang === 'bn' ? 'বিস্তারিত' : 'View'} &rarr;</span>`
+                        }
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(dayNumber) {
+            activeDayNumber = dayNumber;
+            const dayData = roadmapData.find(d => d.day === dayNumber);
+            if (!dayData) return;
+
+            const dayKey = `day_${dayNumber}`;
+            const completedTasks = userProgress[dayKey] || [];
+            const tasksList = currentLang === 'bn' ? dayData.tasksBn : dayData.tasksEn;
+            const dateStr = calculateDateForDay(dayNumber);
+
+            document.getElementById('modalCategoryBadge').innerText = dayData.category;
+            document.getElementById('modalDayTitle').innerText = `Day ${dayNumber}: ${currentLang === 'bn' ? dayData.titleBn : dayData.titleEn}`;
+            document.getElementById('modalDayDate').innerText = `${currentLang === 'bn' ? 'তারিখ: ' : 'Date: '}${dateStr}`;
+
+            const taskContainer = document.getElementById('modalTaskList');
+            taskContainer.innerHTML = '';
+
+            tasksList.forEach((task, index) => {
+                const isChecked = completedTasks.includes(index);
+                const taskRow = document.createElement('label');
+                taskRow.className = `flex items-start gap-3 p-3 rounded-lg border transition cursor-pointer ${isChecked ? 'bg-accentBlue/10 border-accentBlue/40 text-white' : 'bg-gray-800/40 border-gray-700 text-gray-300 hover:bg-gray-800'}`;
+                
+                taskRow.innerHTML = `
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTask(${dayNumber}, ${index})" class="mt-1 w-4 h-4 text-accentBlue bg-gray-900 border-gray-600 rounded focus:ring-accentBlue">
+                    <span class="text-sm font-medium ${isChecked ? 'line-through text-gray-400' : ''}">${task}</span>
+                `;
+                taskContainer.appendChild(taskRow);
+            });
+
+            updateModalFooter(completedTasks.length, tasksList.length);
+            document.getElementById('taskModal').classList.remove('hidden');
+        }
+
+        function toggleTask(dayNumber, taskIndex) {
+            const dayKey = `day_${dayNumber}`;
+            let completed = userProgress[dayKey] || [];
+
+            if (completed.includes(taskIndex)) {
+                completed = completed.filter(i => i !== taskIndex);
+            } else {
+                completed.push(taskIndex);
+            }
+
+            userProgress[dayKey] = completed;
+            localStorage.setItem('attendance_roadmap_progress', JSON.stringify(userProgress));
+
+            const dayData = roadmapData.find(d => d.day === dayNumber);
+            const totalTasks = dayData.tasksBn.length;
+
+            updateModalFooter(completed.length, totalTasks);
+            renderGrid();
+            updateOverallProgress();
+            
+            // Re-render modal check states to maintain visually updated strikes
+            openModal(dayNumber);
+        }
+
+        function updateModalFooter(completedCount, totalCount) {
+            document.getElementById('modalProgressText').innerText = `${completedCount}/${totalCount} ${currentLang === 'bn' ? 'টি সম্পন্ন হয়েছে' : 'Tasks Completed'}`;
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.add('hidden');
+            activeDayNumber = null;
+        }
+
+        function updateOverallProgress() {
+            let completedDays = 0;
+
+            roadmapData.forEach(item => {
+                const dayKey = `day_${item.day}`;
+                const completedTasks = userProgress[dayKey] || [];
+                if (completedTasks.length === item.tasksBn.length && item.tasksBn.length > 0) {
+                    completedDays++;
+                }
+            });
+
+            document.getElementById('completedDaysCount').innerText = completedDays;
+            const percentage = Math.round((completedDays / 60) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+
+            const t = translations[currentLang];
+            document.getElementById('progressText').innerHTML = `${t.progressText} <span class="text-neonBlue">${completedDays}</span>/60 ${currentLang === 'bn' ? 'দিন' : 'Days'} (${percentage}%)`;
+        }
+
+        function confirmReset() {
+            const t = translations[currentLang];
+            if (confirm(t.confirmReset)) {
+                userProgress = {};
+                localStorage.removeItem('attendance_roadmap_progress');
+                renderGrid();
+                updateOverallProgress();
+                if (activeDayNumber !== null) {
+                    openModal(activeDayNumber);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
